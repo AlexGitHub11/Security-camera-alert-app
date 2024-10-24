@@ -1,12 +1,14 @@
 import cv2
 import time
 from send_mail import send
+import glob
 
 video = cv2.VideoCapture(0)
 time.sleep(1)
 
 first_frame = None
 status_list = []
+count = 1
 
 while True:
 
@@ -27,7 +29,7 @@ while True:
     # Identify movement
     thresh_frame = cv2.threshold(delta_frame, 60, 255, cv2.THRESH_BINARY)[1]
     dil_frame = cv2.dilate(thresh_frame, None, iterations=2)
-    cv2.imshow("Vidio", dil_frame)
+    cv2.imshow("Video", dil_frame)
 
     contours, check = cv2.findContours(dil_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -41,14 +43,21 @@ while True:
         if rectangle.any():
             status = 1
 
+            # Get middle image for alert
+            cv2.imwrite(f"images/{count}.png", frame)
+            count = count + 1
+            all_images = glob.glob("images/*.png")
+            index = int(len(all_images) / 2)
+            image_with_object = all_images[index]
+
     # Call send function when movement leaves frame
     status_list.append(status)
     status_list = status_list[-2:]
 
     if status_list[0] == 1 and status_list[1] == 0:
-        send()
+        send(image_with_object)
 
-    cv2.imshow("vidio", frame)
+    cv2.imshow("video", frame)
 
     key = cv2.waitKey(1)
 
