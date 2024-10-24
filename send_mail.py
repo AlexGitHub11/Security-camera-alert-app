@@ -8,8 +8,8 @@ PASSWORD = os.getenv("PASSWORD2")
 RECEIVER = os.getenv("EMAILUSERNAME")
 
 
-def send(image_path):
-    email_message = EmailMessage
+def send_email(image_path):
+    email_message = EmailMessage()
     email_message["Subject"] = "New Camera Alert!"
     email_message.set_content("New activity on your camera!")
 
