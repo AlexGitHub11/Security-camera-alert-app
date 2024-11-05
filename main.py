@@ -14,6 +14,7 @@ count = 1
 
 
 def clean_folder():
+    """ Clean images folder """
     images = glob.glob("images/*.png")
     for image in images:
         os.remove(image)
